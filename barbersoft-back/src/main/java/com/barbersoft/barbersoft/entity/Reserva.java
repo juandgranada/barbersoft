@@ -22,7 +22,7 @@ public class Reserva {
     @Column(name = "telefono_cliente", nullable = false)
     private String telefonoCliente;
 
-    @Column(name = "email_cliente")
+    @Column(name = "email_cliente", nullable = false)
     private String emailCliente;
 
     @Column(name = "fecha_inicio", nullable = false)
@@ -39,6 +39,9 @@ public class Reserva {
 
     @Column(columnDefinition = "TEXT")
     private String observaciones;
+
+    @Column(name = "codigo_reserva", nullable = false, unique = true, length = 12)
+    private String codigoReserva;
 
     public Reserva() {
     }
@@ -121,5 +124,13 @@ public class Reserva {
 
     public void setObservaciones(String observaciones) {
         this.observaciones = observaciones;
+    }
+
+    public String getCodigoReserva() {
+        return codigoReserva;
+    }
+
+    public void setCodigoReserva(String codigoReserva) {
+        this.codigoReserva = codigoReserva;
     }
 }
