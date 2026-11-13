@@ -9,7 +9,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/barberos")
-@CrossOrigin (origins = "http://localhost:5173")
+@CrossOrigin(origins = "http://localhost:5173")
 public class BarberoController {
 
     private final BarberoService barberoService;
@@ -41,8 +41,10 @@ public class BarberoController {
         return barberoService.actualizarBarbero(id, barbero);
     }
 
-    @DeleteMapping("/{id}")
-    public void eliminarBarbero(@PathVariable Long id) {
-        barberoService.eliminarBarbero(id);
+    @PatchMapping("/{id}/estado")
+    public Barbero cambiarEstado(
+            @PathVariable Long id,
+            @RequestParam Boolean activo) {
+        return barberoService.cambiarEstado(id, activo);
     }
 }

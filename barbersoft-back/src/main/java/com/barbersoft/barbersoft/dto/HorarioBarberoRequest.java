@@ -8,6 +8,7 @@ public class HorarioBarberoRequest {
     private Short diaSemana;
     private LocalTime horaInicio;
     private LocalTime horaFin;
+    private Boolean activo;
 
     public HorarioBarberoRequest() {
     }
@@ -42,5 +43,13 @@ public class HorarioBarberoRequest {
 
     public void setHoraFin(LocalTime horaFin) {
         this.horaFin = horaFin;
+    }
+
+    public Boolean getActivo() {
+        return activo;
+    }
+
+    public void setActivo(Boolean activo) {
+        this.activo = activo;
     }
 }

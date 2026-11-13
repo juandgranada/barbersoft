@@ -13,9 +13,19 @@ public interface ReservaRepository extends JpaRepository<Reserva, Long> {
             Long barberoId,
             String estado,
             LocalDateTime fechaFin,
-            LocalDateTime fechaInicio
-    );
+            LocalDateTime fechaInicio);
 
     boolean existsByCodigoReserva(String codigoReserva);
-    
+
+    boolean existsByBarberoIdAndEstadoAndFechaInicioLessThanAndFechaFinGreaterThan(
+            Long barberoId,
+            String estado,
+            LocalDateTime fechaFin,
+            LocalDateTime fechaInicio);
+
+    boolean existsByEstadoAndFechaInicioLessThanAndFechaFinGreaterThan(
+            String estado,
+            LocalDateTime fechaFin,
+            LocalDateTime fechaInicio);
+
 }
