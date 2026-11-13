@@ -160,7 +160,7 @@
             },
             "body": {
               "mode": "raw",
-              "raw": "{\n    \"nombre\": \"Eric\",\n    \"apellido\": \"Granada\",\n    \"telefono\": \"3003003043\",\n    \"email\": \"eric.granada@gmail.com\",\n    \"foto\": \"eric.granada.jpg\",\n    \"descripcion\": \"Barbero junior\",\n    \"activo\": true  \n}",
+              "raw": "{\n    \"nombre\": \"Pepito\",\n    \"apellido\": \"Perez\",\n    \"telefono\": \"3003003048\",\n    \"email\": \"pperez@gmail.com\",\n    \"foto\": \"pperez.jpg\",\n    \"descripcion\": \"Barbero especializado en pefilamiento de barba\",\n    \"activo\": true  \n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -197,7 +197,7 @@
             "header": [],
             "description": "",
             "url": {
-              "raw": "http://localhost:8080/api/barberos/2",
+              "raw": "http://localhost:8080/api/barberos/3",
               "protocol": "http",
               "host": [
                 "localhost:8080"
@@ -205,7 +205,7 @@
               "path": [
                 "api",
                 "barberos",
-                "2"
+                "3"
               ],
               "query": [],
               "variable": []
@@ -219,7 +219,7 @@
             "header": [],
             "description": "",
             "url": {
-              "raw": "http://localhost:8080/api/barberos/3",
+              "raw": "http://localhost:8080/api/barberos/6",
               "protocol": "http",
               "host": [
                 "localhost:8080"
@@ -227,14 +227,14 @@
               "path": [
                 "api",
                 "barberos",
-                "3"
+                "6"
               ],
               "query": [],
               "variable": []
             },
             "body": {
               "mode": "raw",
-              "raw": "{\n    \"nombre\": \"Juan\",\n    \"apellido\": \"Granada\",\n    \"telefono\": \"3003003031\",\n    \"email\": \"jgranada@gmail.com\",\n    \"foto\": \"jgranada.jpg\",\n    \"descripcion\": \"Barbero con experiencia\",\n    \"activo\": true  \n}",
+              "raw": "{\n    \"nombre\": \"Pepito\",\n    \"apellido\": \"Perez\",\n    \"telefono\": \"3003003048\",\n    \"email\": \"pepitoperez@gmail.com\",\n    \"foto\": \"pperez.jpg\",\n    \"descripcion\": \"Barbero especializado en pefilamiento de barba\",\n    \"activo\": true  \n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -261,6 +261,62 @@
                 "1"
               ],
               "query": [],
+              "variable": []
+            }
+          }
+        },
+        {
+          "name": "Desactivar Barbero",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "description": "",
+            "url": {
+              "raw": "http://localhost:8080/api/barberos/6/estado?activo=false",
+              "protocol": "http",
+              "host": [
+                "localhost:8080"
+              ],
+              "path": [
+                "api",
+                "barberos",
+                "6",
+                "estado"
+              ],
+              "query": [
+                {
+                  "key": "activo",
+                  "value": "false"
+                }
+              ],
+              "variable": []
+            }
+          }
+        },
+        {
+          "name": "Activar Barbero",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "description": "",
+            "url": {
+              "raw": "http://localhost:8080/api/barberos/6/estado?activo=true",
+              "protocol": "http",
+              "host": [
+                "localhost:8080"
+              ],
+              "path": [
+                "api",
+                "barberos",
+                "6",
+                "estado"
+              ],
+              "query": [
+                {
+                  "key": "activo",
+                  "value": "true"
+                }
+              ],
               "variable": []
             }
           }
@@ -300,6 +356,36 @@
               }
             }
           }
+        },
+        {
+          "name": "Crear Reserva",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "description": "",
+            "url": {
+              "raw": "http://localhost:8080/api/reservas",
+              "protocol": "http",
+              "host": [
+                "localhost:8080"
+              ],
+              "path": [
+                "api",
+                "reservas"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"nombreCliente\": \"Carlos Ramirez\",\n    \"telefonoCliente\": \"3001234567\",\n    \"emailCliente\": \"carlos@gmail.com\",\n    \"observaciones\": \"Prefiero un corte clásico\",\n    \"barberoId\": 2,\n    \"fecha\": \"2026-11-12\",\n    \"horaInicio\": \"10:00\",\n    \"serviciosIds\": [2]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
         }
       ]
     },
@@ -327,7 +413,7 @@
             },
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"barberoId\": 3,\n  \"servicioId\": 5\n}",
+              "raw": "{\n  \"barberoId\": 6,\n  \"servicioId\": 4\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -362,12 +448,113 @@
             },
             "body": {
               "mode": "raw",
-              "raw": "{\n    \"barberoId\": 2,\n    \"diaSemana\": 6,\n    \"horaInicio\": \"14:00\",\n    \"horaFin\": \"17:00\"\n}",
+              "raw": "{\n    \"barberoId\": 6,\n    \"diaSemana\": 1,\n    \"horaInicio\": \"08:00\",\n    \"horaFin\": \"12:00\"\n}",
               "options": {
                 "raw": {
                   "language": "json"
                 }
               }
+            }
+          }
+        },
+        {
+          "name": "Consultar Horario de Barbero",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "description": "",
+            "url": {
+              "raw": "http://localhost:8080/api/horario-barbero/barbero/3",
+              "protocol": "http",
+              "host": [
+                "localhost:8080"
+              ],
+              "path": [
+                "api",
+                "horario-barbero",
+                "barbero",
+                "3"
+              ],
+              "query": [],
+              "variable": []
+            }
+          }
+        },
+        {
+          "name": "Actualizar Horario",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "description": "",
+            "url": {
+              "raw": "http://localhost:8080/api/horario-barbero/2",
+              "protocol": "http",
+              "host": [
+                "localhost:8080"
+              ],
+              "path": [
+                "api",
+                "horario-barbero",
+                "2"
+              ],
+              "query": [],
+              "variable": []
+            }
+          }
+        },
+        {
+          "name": "Desactivar Horario",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "description": "",
+            "url": {
+              "raw": "http://localhost:8080/api/horario-barbero/13/estado?activo=false",
+              "protocol": "http",
+              "host": [
+                "localhost:8080"
+              ],
+              "path": [
+                "api",
+                "horario-barbero",
+                "13",
+                "estado"
+              ],
+              "query": [
+                {
+                  "key": "activo",
+                  "value": "false"
+                }
+              ],
+              "variable": []
+            }
+          }
+        },
+        {
+          "name": "Activar Horario",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "description": "",
+            "url": {
+              "raw": "http://localhost:8080/api/horario-barbero/13/estado?activo=true",
+              "protocol": "http",
+              "host": [
+                "localhost:8080"
+              ],
+              "path": [
+                "api",
+                "horario-barbero",
+                "13",
+                "estado"
+              ],
+              "query": [
+                {
+                  "key": "activo",
+                  "value": "true"
+                }
+              ],
+              "variable": []
             }
           }
         }
@@ -377,7 +564,7 @@
       "name": "Disponibilidad",
       "item": [
         {
-          "name": "Consultar Disponibilidad de Barbero",
+          "name": "Consultar Disponibilidad de Barbero con Excepciones",
           "request": {
             "method": "POST",
             "header": [],
@@ -397,12 +584,283 @@
             },
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"barberoId\": 3,\n  \"fecha\": \"2026-11-03\",\n  \"serviciosIds\": [2]\n}",
+              "raw": "{\n    \"barberoId\": 6,\n    \"fecha\": \"2026-12-12\",\n    \"serviciosIds\": [2]\n}",
               "options": {
                 "raw": {
                   "language": "json"
                 }
               }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Excepciones Horarios",
+      "item": [
+        {
+          "name": "Consultar Ausencias",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "description": "",
+            "url": {
+              "raw": "http://localhost:8080/api/excepciones-horario/barbero/3",
+              "protocol": "http",
+              "host": [
+                "localhost:8080"
+              ],
+              "path": [
+                "api",
+                "excepciones-horario",
+                "barbero",
+                "3"
+              ],
+              "query": [],
+              "variable": []
+            }
+          }
+        },
+        {
+          "name": "Registrar Ausencia",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "description": "",
+            "url": {
+              "raw": "http://localhost:8080/api/excepciones-horario",
+              "protocol": "http",
+              "host": [
+                "localhost:8080"
+              ],
+              "path": [
+                "api",
+                "excepciones-horario"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"barberoId\": 6,\n    \"fechaInicio\": \"2026-12-10\",\n    \"fechaFin\": \"2026-12-15\",\n    \"motivo\": \"VACACIONES\",\n    \"descripcion\": \"Vacaciones de fin de año\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Desactivar Ausencia",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "description": "",
+            "url": {
+              "raw": "http://localhost:8080/api/excepciones-horario/3/estado?activo=false",
+              "protocol": "http",
+              "host": [
+                "localhost:8080"
+              ],
+              "path": [
+                "api",
+                "excepciones-horario",
+                "3",
+                "estado"
+              ],
+              "query": [
+                {
+                  "key": "activo",
+                  "value": "false"
+                }
+              ],
+              "variable": []
+            }
+          }
+        },
+        {
+          "name": "Activar Ausencia",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "description": "",
+            "url": {
+              "raw": "http://localhost:8080/api/excepciones-horario/0/estado?activo=true",
+              "protocol": "http",
+              "host": [
+                "localhost:8080"
+              ],
+              "path": [
+                "api",
+                "excepciones-horario",
+                "0",
+                "estado"
+              ],
+              "query": [
+                {
+                  "key": "activo",
+                  "value": "true"
+                }
+              ],
+              "variable": []
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Festivos",
+      "item": [
+        {
+          "name": "Listar Festivos",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "description": "",
+            "url": {
+              "raw": "http://localhost:8080/api/festivos",
+              "protocol": "http",
+              "host": [
+                "localhost:8080"
+              ],
+              "path": [
+                "api",
+                "festivos"
+              ],
+              "query": [],
+              "variable": []
+            }
+          }
+        },
+        {
+          "name": "Listar Festivos por Año",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "description": "",
+            "url": {
+              "raw": "http://localhost:8080/api/festivos/anio/2026",
+              "protocol": "http",
+              "host": [
+                "localhost:8080"
+              ],
+              "path": [
+                "api",
+                "festivos",
+                "anio",
+                "2026"
+              ],
+              "query": [],
+              "variable": []
+            }
+          }
+        },
+        {
+          "name": "Resgitrar Festivo",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "description": "",
+            "url": {
+              "raw": "http://localhost:8080/api/festivos",
+              "protocol": "http",
+              "host": [
+                "localhost:8080"
+              ],
+              "path": [
+                "api",
+                "festivos"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"nombre\": \"Día de la Independencia\",\n    \"fecha\": \"2027-07-20\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Editar Festivo",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "description": "",
+            "url": {
+              "raw": "http://localhost:8080/api/festivos/{id}",
+              "protocol": "http",
+              "host": [
+                "localhost:8080"
+              ],
+              "path": [
+                "api",
+                "festivos",
+                "{id}"
+              ],
+              "query": [],
+              "variable": []
+            }
+          }
+        },
+        {
+          "name": "Desactivar Festivo",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "description": "",
+            "url": {
+              "raw": "http://localhost:8080/api/festivos/{id}/estado?activo=false",
+              "protocol": "http",
+              "host": [
+                "localhost:8080"
+              ],
+              "path": [
+                "api",
+                "festivos",
+                "{id}",
+                "estado"
+              ],
+              "query": [
+                {
+                  "key": "activo",
+                  "value": "false"
+                }
+              ],
+              "variable": []
+            }
+          }
+        },
+        {
+          "name": "Activar Festivo",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "description": "",
+            "url": {
+              "raw": "http://localhost:8080/api/festivos/{id}/estado?activo=true",
+              "protocol": "http",
+              "host": [
+                "localhost:8080"
+              ],
+              "path": [
+                "api",
+                "festivos",
+                "{id}",
+                "estado"
+              ],
+              "query": [
+                {
+                  "key": "activo",
+                  "value": "true"
+                }
+              ],
+              "variable": []
             }
           }
         }
