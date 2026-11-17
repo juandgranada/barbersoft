@@ -16,14 +16,19 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
+import com.barbersoft.barbersoft.dto.ReservaListadoResponse;
+import com.barbersoft.barbersoft.dto.ReservaDetalleResponse;
+import com.barbersoft.barbersoft.dto.ReservaServicioDetalleResponse;
 
 import java.math.BigDecimal;
 import java.security.SecureRandom;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 public class ReservaService {
@@ -42,8 +47,7 @@ public class ReservaService {
             ReservaServicioRepository reservaServicioRepository,
             BarberoRepository barberoRepository,
             ServicioRepository servicioRepository,
-            DisponibilidadService disponibilidadService
-    ) {
+            DisponibilidadService disponibilidadService) {
         this.reservaRepository = reservaRepository;
         this.reservaServicioRepository = reservaServicioRepository;
         this.barberoRepository = barberoRepository;
@@ -58,8 +62,7 @@ public class ReservaService {
         Barbero barbero = barberoRepository.findByIdForUpdate(request.getBarberoId())
                 .orElseThrow(() -> new ResponseStatusException(
                         HttpStatus.NOT_FOUND,
-                        "El barbero seleccionado no existe"
-                ));
+                        "El barbero seleccionado no existe"));
 
         // 2. Comprobar nuevamente la disponibilidad
         DisponibilidadRequest disponibilidadRequest = new DisponibilidadRequest();
@@ -68,8 +71,7 @@ public class ReservaService {
         disponibilidadRequest.setFecha(request.getFecha());
         disponibilidadRequest.setServiciosIds(request.getServiciosIds());
 
-        DisponibilidadResponse disponibilidad =
-                disponibilidadService.consultarDisponibilidad(disponibilidadRequest);
+        DisponibilidadResponse disponibilidad = disponibilidadService.consultarDisponibilidad(disponibilidadRequest);
 
         LocalDateTime fechaInicio = request.getFecha().atTime(request.getHoraInicio());
 
@@ -79,8 +81,7 @@ public class ReservaService {
 
             throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST,
-                    "El horario seleccionado ya no está disponible. Seleccione otro horario"
-            );
+                    "El horario seleccionado ya no está disponible. Seleccione otro horario");
         }
 
         // 4. Obtener los servicios seleccionados
@@ -89,8 +90,7 @@ public class ReservaService {
         if (servicios.size() != request.getServiciosIds().size()) {
             throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST,
-                    "Uno o varios servicios seleccionados no existen"
-            );
+                    "Uno o varios servicios seleccionados no existen");
         }
 
         Map<Long, Servicio> serviciosPorId = new HashMap<>();
@@ -163,8 +163,7 @@ public class ReservaService {
                 reservaGuardada.getFechaInicio(),
                 reservaGuardada.getFechaFin(),
                 reservaGuardada.getTotal(),
-                new ArrayList<>(request.getServiciosIds())
-        );
+                new ArrayList<>(request.getServiciosIds()));
     }
 
     private String generarCodigoReserva() {
@@ -185,4 +184,153 @@ public class ReservaService {
 
         return codigo;
     }
+
+    // ==========================================
+    // HU07 - CONSULTA ADMINISTRATIVA DE RESERVAS
+    // ==========================================
+
+    @Transactional(readOnly = true)
+    public List<ReservaListadoResponse> listarReservas(
+            LocalDate fecha,
+            Long barberoId,
+            String estado) {
+
+        if (barberoId != null && barberoId <= 0) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "El identificador del barbero no es válido");
+        }
+
+        if (estado != null) {
+            estado = estado.trim().toUpperCase();
+
+            if (!List.of("CONFIRMADA", "CANCELADA", "COMPLETADA")
+                    .contains(estado)) {
+
+                throw new ResponseStatusException(
+                        HttpStatus.BAD_REQUEST,
+                        "El estado de la reserva no es válido");
+            }
+        }
+
+        LocalDateTime desde = fecha != null
+                ? fecha.atStartOfDay()
+                : null;
+
+        LocalDateTime hasta = fecha != null
+                ? fecha.plusDays(1).atStartOfDay()
+                : null;
+
+        List<Reserva> reservas = reservaRepository.buscarReservas(
+                barberoId,
+                estado,
+                desde,
+                hasta);
+
+        return reservas.stream()
+                .map(reserva -> new ReservaListadoResponse(
+                        reserva.getId(),
+                        reserva.getCodigoReserva(),
+                        reserva.getNombreCliente(),
+                        reserva.getBarbero().getNombre()
+                                + " "
+                                + reserva.getBarbero().getApellido(),
+                        reserva.getFechaInicio(),
+                        reserva.getFechaFin(),
+                        reserva.getTotal(),
+                        reserva.getEstado()))
+                .collect(Collectors.toList());
+    }
+
+    // ==========================================
+    // HU07 - DETALLE DE UNA RESERVA
+    // ==========================================
+
+    @Transactional(readOnly = true)
+    public ReservaDetalleResponse obtenerDetalleReserva(Long id) {
+
+        Reserva reserva = reservaRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND,
+                        "La reserva no existe"));
+
+        List<ReservaServicioDetalleResponse> servicios = reservaServicioRepository.findByReservaId(id)
+                .stream()
+                .map(detalle -> new ReservaServicioDetalleResponse(
+                        detalle.getServicio().getId(),
+                        detalle.getServicio().getNombre(),
+                        detalle.getPrecio(),
+                        detalle.getDuracionMinutos()))
+                .collect(Collectors.toList());
+
+        return new ReservaDetalleResponse(
+                reserva.getId(),
+                reserva.getCodigoReserva(),
+                reserva.getEstado(),
+                reserva.getNombreCliente(),
+                reserva.getTelefonoCliente(),
+                reserva.getEmailCliente(),
+                reserva.getBarbero().getId(),
+                reserva.getBarbero().getNombre()
+                        + " "
+                        + reserva.getBarbero().getApellido(),
+                reserva.getFechaInicio(),
+                reserva.getFechaFin(),
+                reserva.getTotal(),
+                reserva.getObservaciones(),
+                servicios);
+    }
+
+    // ==========================================
+    // HU07 - CAMBIAR ESTADO DE UNA RESERVA
+    // ==========================================
+
+    @Transactional
+    public Reserva cambiarEstadoReserva(Long id, String nuevoEstado) {
+
+        Reserva reserva = reservaRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND,
+                        "La reserva no existe"));
+
+        if (nuevoEstado == null || nuevoEstado.isBlank()) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "Debe proporcionar el nuevo estado");
+        }
+
+        nuevoEstado = nuevoEstado.trim().toUpperCase();
+
+        if (!List.of("CONFIRMADA", "CANCELADA", "COMPLETADA")
+                .contains(nuevoEstado)) {
+
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "El estado indicado no es válido");
+        }
+
+        String estadoActual = reserva.getEstado();
+
+        if (estadoActual.equals(nuevoEstado)) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "La reserva ya tiene ese estado");
+        }
+
+        boolean transicionPermitida = estadoActual.equals("CONFIRMADA")
+                && (nuevoEstado.equals("CANCELADA")
+                        || nuevoEstado.equals("COMPLETADA"));
+
+        if (!transicionPermitida) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "No se permite cambiar una reserva de "
+                            + estadoActual + " a " + nuevoEstado);
+        }
+
+        reserva.setEstado(nuevoEstado);
+
+        return reservaRepository.save(reserva);
+    }
+
 }
