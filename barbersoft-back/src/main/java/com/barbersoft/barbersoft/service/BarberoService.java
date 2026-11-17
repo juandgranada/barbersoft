@@ -21,6 +21,11 @@ public class BarberoService {
         return barberoRepository.findAll();
     }
 
+    // Listar solamente los barberos activos
+    public List<Barbero> listarBarberosActivos() {
+        return barberoRepository.findByActivoTrueOrderByNombreAsc();
+    }
+
     public Barbero guardarBarbero(Barbero barbero) {
         return barberoRepository.save(barbero);
     }
