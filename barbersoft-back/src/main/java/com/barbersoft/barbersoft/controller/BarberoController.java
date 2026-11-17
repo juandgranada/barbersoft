@@ -23,6 +23,12 @@ public class BarberoController {
         return barberoService.listarBarberos();
     }
 
+    // Listar solamente los barberos activos
+    @GetMapping("/activos")
+    public List<Barbero> listarBarberosActivos() {
+        return barberoService.listarBarberosActivos();
+    }
+
     @PostMapping
     public Barbero guardarBarbero(@RequestBody Barbero barbero) {
         return barberoService.guardarBarbero(barbero);
