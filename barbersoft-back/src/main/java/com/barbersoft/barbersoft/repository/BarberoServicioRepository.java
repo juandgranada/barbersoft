@@ -1,10 +1,11 @@
 package com.barbersoft.barbersoft.repository;
 
-import com.barbersoft.barbersoft.entity.BarberoServicio;
-import org.springframework.data.jpa.repository.JpaRepository;
-
 import java.util.List;
 import java.util.Optional;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import com.barbersoft.barbersoft.entity.BarberoServicio;
 
 public interface BarberoServicioRepository
         extends JpaRepository<BarberoServicio, Long> {
