@@ -1,29 +1,23 @@
 package com.barbersoft.barbersoft.security;
 
+import java.util.List;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
-
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.HttpStatusEntryPoint;
-import org.springframework.security.web.access.AccessDeniedHandler;
-
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-
-import java.util.List;
 
 @Configuration
 public class SecurityConfig {
@@ -75,17 +69,17 @@ public class SecurityConfig {
                             "/api/auth/login"
                     ).permitAll()
 
+                    // Preflight CORS.
+                    .requestMatchers(HttpMethod.OPTIONS, "/**")
+                    .permitAll()
+
                     // Crear una reserva es público.
-                    .requestMatchers(
-                            HttpMethod.POST,
-                            "/api/reservas"
-                    ).permitAll()
+                    .requestMatchers("/api/reservas", "/api/reservas/**")
+                    .permitAll()
 
                     // Consultar disponibilidad es público.
-                    .requestMatchers(
-                            HttpMethod.POST,
-                            "/api/disponibilidad"
-                    ).permitAll()
+                    .requestMatchers("/api/disponibilidad", "/api/disponibilidad/**")
+                    .permitAll()
 
                     // Consultar servicios activos es público.
                     .requestMatchers(
@@ -98,6 +92,10 @@ public class SecurityConfig {
                             HttpMethod.GET,
                             "/api/barberos/activos"
                     ).permitAll()
+
+                    // Error interno de Spring para conservar respuestas 400/404/validación.
+                    .requestMatchers("/error", "/error/**")
+                    .permitAll()
 
                     // Cualquier otra ruta necesita autenticación.
                     .anyRequest().hasRole("ADMIN")

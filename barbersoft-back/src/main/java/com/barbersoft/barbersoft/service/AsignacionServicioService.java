@@ -12,6 +12,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.List;
+
 @Service
 public class AsignacionServicioService {
 
@@ -83,5 +85,42 @@ public class AsignacionServicioService {
         asignacion.setActivo(true);
 
         return barberoServicioRepository.save(asignacion);
+    }
+
+    public List<BarberoServicio> listarPorBarbero(Long barberoId) {
+        if (barberoId == null) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "Debe proporcionar el ID del barbero"
+            );
+        }
+
+        if (!barberoRepository.existsById(barberoId)) {
+            throw new ResponseStatusException(
+                    HttpStatus.NOT_FOUND,
+                    "El barbero no existe"
+            );
+        }
+
+        return barberoServicioRepository.findByBarberoIdAndActivoTrue(barberoId);
+    }
+
+    public void desasignarServicio(Long barberoId, Long servicioId) {
+        if (barberoId == null || servicioId == null) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "Debe proporcionar el ID del barbero y del servicio"
+            );
+        }
+
+        BarberoServicio asignacion = barberoServicioRepository
+                .findByBarberoIdAndServicioIdAndActivoTrue(barberoId, servicioId)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND,
+                        "El servicio no está asignado a este barbero"
+                ));
+
+        asignacion.setActivo(false);
+        barberoServicioRepository.save(asignacion);
     }
 }

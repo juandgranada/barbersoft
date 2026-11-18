@@ -28,4 +28,22 @@ public class AsignacionServicioController {
 
         return ResponseEntity.status(HttpStatus.CREATED).body(asignacion);
     }
+
+    @GetMapping("/barbero/{barberoId}")
+    public ResponseEntity<java.util.List<BarberoServicio>> listarPorBarbero(
+            @PathVariable Long barberoId) {
+
+        return ResponseEntity.ok(
+                asignacionServicioService.listarPorBarbero(barberoId)
+        );
+    }
+
+    @DeleteMapping("/barbero/{barberoId}/servicio/{servicioId}")
+    public ResponseEntity<Void> desasignarServicio(
+            @PathVariable Long barberoId,
+            @PathVariable Long servicioId) {
+
+        asignacionServicioService.desasignarServicio(barberoId, servicioId);
+        return ResponseEntity.noContent().build();
+    }
 }
