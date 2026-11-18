@@ -12,23 +12,45 @@ public class Servicio {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false, length = 100)
     private String nombre;
 
+    @Column(length = 300)
     private String descripcion;
 
+    @Column(nullable = false, precision = 10, scale = 2)
     private BigDecimal precio;
 
+    @Column(name = "duracion_minutos", nullable = false)
     private Integer duracionMinutos;
 
+    @Column(nullable = false)
     private Boolean activo;
 
+    @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
 
+    @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
     public Servicio() {
     }
 
+    @PrePersist
+    protected void onCreate() {
+        LocalDateTime ahora = LocalDateTime.now();
+        createdAt = ahora;
+        updatedAt = ahora;
+
+        if (activo == null) {
+            activo = true;
+        }
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        updatedAt = LocalDateTime.now();
+    }
     // Getters y Setters
 
     public Long getId() {

@@ -3,7 +3,10 @@ package com.barbersoft.barbersoft.service;
 import com.barbersoft.barbersoft.entity.Barbero;
 import com.barbersoft.barbersoft.repository.BarberoRepository;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
+
 import java.util.List;
 
 @Service
@@ -16,6 +19,11 @@ public class BarberoService {
 
     public List<Barbero> listarBarberos() {
         return barberoRepository.findAll();
+    }
+
+    // Listar solamente los barberos activos
+    public List<Barbero> listarBarberosActivos() {
+        return barberoRepository.findByActivoTrueOrderByNombreAsc();
     }
 
     public Barbero guardarBarbero(Barbero barbero) {
@@ -43,7 +51,15 @@ public class BarberoService {
         return barberoRepository.save(barbero);
     }
 
-    public void eliminarBarbero(Long id) {
-        barberoRepository.deleteById(id);
+    public Barbero cambiarEstado(Long id, Boolean activo) {
+
+        Barbero barbero = barberoRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND,
+                        "El barbero no existe"));
+
+        barbero.setActivo(activo);
+
+        return barberoRepository.save(barbero);
     }
 }

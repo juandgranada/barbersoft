@@ -7,6 +7,8 @@ import com.barbersoft.barbersoft.repository.BarberoServicioRepository;
 import com.barbersoft.barbersoft.repository.HorarioBarberoRepository;
 import com.barbersoft.barbersoft.repository.ReservaRepository;
 import com.barbersoft.barbersoft.repository.ServicioRepository;
+import com.barbersoft.barbersoft.repository.FestivoRepository;
+import com.barbersoft.barbersoft.repository.ExcepcionHorarioRepository;
 import com.barbersoft.barbersoft.entity.Barbero;
 import com.barbersoft.barbersoft.entity.Servicio;
 import com.barbersoft.barbersoft.entity.HorarioBarbero;
@@ -33,18 +35,24 @@ public class DisponibilidadService {
     private final HorarioBarberoRepository horarioBarberoRepository;
     private final ReservaRepository reservaRepository;
     private final ServicioRepository servicioRepository;
+    private final FestivoRepository festivoRepository;
+    private final ExcepcionHorarioRepository excepcionHorarioRepository;
 
     public DisponibilidadService(
             BarberoRepository barberoRepository,
             BarberoServicioRepository barberoServicioRepository,
             HorarioBarberoRepository horarioBarberoRepository,
             ReservaRepository reservaRepository,
-            ServicioRepository servicioRepository) {
+            ServicioRepository servicioRepository,
+            FestivoRepository festivoRepository,
+            ExcepcionHorarioRepository excepcionHorarioRepository) {
         this.barberoRepository = barberoRepository;
         this.barberoServicioRepository = barberoServicioRepository;
         this.horarioBarberoRepository = horarioBarberoRepository;
         this.reservaRepository = reservaRepository;
         this.servicioRepository = servicioRepository;
+        this.festivoRepository = festivoRepository;
+        this.excepcionHorarioRepository = excepcionHorarioRepository;
     }
 
     public void validarSolicitud(DisponibilidadRequest request) {
@@ -270,17 +278,33 @@ public class DisponibilidadService {
             LocalDate fecha,
             Integer duracionTotal) {
 
-        // Generar horarios según las jornadas del barbero
+        // 1. Si es festivo, toda la barbería estará cerrada
+        if (festivoRepository.existsByFechaAndActivoTrue(fecha)) {
+            return new ArrayList<>();
+        }
+
+        // 2. Si el barbero tiene una excepción activa, no estará disponible
+        boolean tieneExcepcion = excepcionHorarioRepository
+                .existsByBarberoIdAndActivoTrueAndFechaInicioLessThanEqualAndFechaFinGreaterThanEqual(
+                        barberoId,
+                        fecha,
+                        fecha);
+
+        if (tieneExcepcion) {
+            return new ArrayList<>();
+        }
+
+        // 3. Generar horarios según las jornadas del barbero
         List<LocalTime> horariosGenerados = generarHorariosDelBarbero(barberoId, fecha, duracionTotal);
 
-        // Eliminar horarios ocupados por reservas confirmadas
+        // 4. Eliminar horarios ocupados
         List<LocalTime> horariosDisponibles = filtrarHorariosOcupados(
                 barberoId,
                 fecha,
                 duracionTotal,
                 horariosGenerados);
 
-        // Eliminar horarios que ya pasaron
+        // 5. Eliminar horarios pasados
         return filtrarHorariosPasados(fecha, horariosDisponibles);
     }
 
